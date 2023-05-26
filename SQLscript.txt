@@ -1,0 +1,77 @@
+/*****************************LIPHAQOLA CTMS ***********************/
+
+
+/*******************************************************************/
+/**********Tables*******/
+
+CREATE TABLE studySite (
+  siteNo SERIAL,
+  Name VARCHAR(20) PRIMARY KEY,
+  region VARCHAR(20)
+);
+
+CREATE TABLE staff (
+  staffID INTEGER PRIMARY KEY,
+  name VARCHAR(20),
+  surname VARCHAR(20),
+  qualification VARCHAR(20),
+  contacts INTEGER,
+  site VARCHAR(20),
+  FOREIGN KEY (site) REFERENCES studySite (Name)
+);
+
+CREATE TABLE drugs (
+  drugID INT PRIMARY KEY,
+  Name VARCHAR(20) ,
+  dosage VARCHAR(20),
+  Administration VARCHAR(20)
+);
+
+CREATE TABLE studies (
+  studyID SERIAL PRIMARY KEY,
+  title VARCHAR(20),
+  sponsor VARCHAR(20),
+  investigator INTEGER REFERENCES staff (staffID),
+  location VARCHAR(20) REFERENCES studySite (Name),
+  drug INT REFERENCES drugs (drugID), 
+  startdate DATE,
+  enddate DATE,
+  phase INT CHECK (phase BETWEEN 1 AND 3) 
+ 
+);
+
+
+
+CREATE TABLE participant (
+  participantID INTEGER PRIMARY KEY,
+  name VARCHAR(20),
+  surname VARCHAR(20),
+  age INTEGER,
+  gender VARCHAR(20),
+  study INT, 
+  contacts INTEGER,
+  FOREIGN KEY (study) REFERENCES studies (studyID)
+);
+
+
+
+CREATE TABLE users (
+  ID SERIAL,
+  username VARCHAR(20),
+  pin INTEGER NOT NULL CHECK (pin >= 1000 AND pin <= 9999),
+  PRIMARY KEY (username, pin)
+);
+/*****************************************************************/
+
+/*******************Queries to Distribute the tables**************/
+
+SELECT CREATE_REFERENCE_TABLE('drugs');
+SELECT CREATE_REFERENCE_TABLE('studysite');
+SELECT CREATE_REFERENCE_TABLE('staff');
+SELECT CREATE_REFERENCE_TABLE('stuies');
+SELECT * FROM CREATE_DISTRIBUTED_TABLE('participant', 'participantid');
+SELECT CREATE_REFERENCE_TABLE('users');
+
+/*****************************************************************/
+
+
